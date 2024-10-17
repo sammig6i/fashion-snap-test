@@ -3,3 +3,7 @@
 *.pyo
 *.pyd
 IDM-VTON/ckpt/
+
+*.pkl
+*.onnx
+*.pth
