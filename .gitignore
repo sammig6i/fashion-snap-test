@@ -2,7 +2,8 @@
 *.pyc
 *.pyo
 *.pyd
-IDM-VTON/ckpt/
+/ckpt/*
+/ckpt/densepose/
 
 *.pkl
 *.onnx
