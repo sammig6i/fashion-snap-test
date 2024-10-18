@@ -4,7 +4,7 @@ import io
 
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from idm_vton import TryonPipeline, start_tryon
+from idm_vton import TryonPipeline
 from PIL import Image
 
 app = FastAPI()
@@ -16,6 +16,9 @@ app.add_middleware(
   allow_methods=["*"],
   allow_headers=["*"],
 )
+
+
+pipeline = TryonPipeline.from_pretrained("./IDM-VTON", device="cpu")
 
 
 @app.post("/store_user_image")
@@ -31,14 +34,11 @@ async def store_user_image(file: UploadFile = File(...)):
 
 @app.post("/tryon")
 async def virtual_tryon(garment_image: UploadFile = File(...)):
-  #  
   user_image_path = "user_images/full_body.jpg"
   user_image = Image.open(user_image_path)
 
   garment_contents = await garment_image.read()
   garment_image = Image.open(io.BytesIO(garment_contents))
-
-  pipeline = TryonPipeline.from_pretrained("path/to/model")
 
   result_image = pipeline(user_image, garment_image)
 
@@ -46,5 +46,4 @@ async def virtual_tryon(garment_image: UploadFile = File(...)):
   result_image.save(buffered, format="PNG")
   img_str = base64.b64encode(buffered.getvalue()).decode()
 
-  return {"result_image": img_str}
   return {"result_image": img_str}

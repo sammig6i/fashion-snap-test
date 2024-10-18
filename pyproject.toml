@@ -7,22 +7,18 @@ readme = "README.md"
 package-mode = false
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.12"
+python = "^3.10"
 fastapi = {extras = ["standard"], version = "^0.115.2"}
-pillow = ">=8.0,<11.0"
-torch = "2.1.0"
-torchvision = "0.16.0"
-torchaudio = "2.1.0"
-idm-vton = {git = "https://github.com/sammig6i/IDM-VTON.git"}
+
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-
 [tool.ruff]
 line-length = 120
 indent-width = 2
+ignore = ["E402"]  # Ignore "Module level import not at top of file"
 
 [tool.ruff.format]
 indent-style = "space"
