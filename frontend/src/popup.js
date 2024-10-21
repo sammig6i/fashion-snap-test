@@ -1,3 +1,4 @@
+// TODO FUTURE - port frontend to Svelte with DaisyUI
 document.addEventListener('DOMContentLoaded', function () {
   const userImageInput = document.getElementById('userImage');
   const userImagePreview = document.getElementById('userImagePreview');
@@ -18,24 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const file = event.target.files[0];
     if (file) {
       try {
-        const base64 = await fileToBase64(file);
-        const response = await new Promise((resolve, reject) => {
-          chrome.runtime.sendMessage({
-            action: "storeImage",
-            file: {
-              name: file.name,
-              type: file.type,
-              size: file.size,
-              base64: base64
-            }
-          }, (response) => {
-            if (chrome.runtime.lastError) {
-              reject(new Error(chrome.runtime.lastError.message));
-            } else {
-              resolve(response);
-            }
-          });
-        });
+        const response = await sendImageToServer(file);
 
         if (response && response.img_path) {
           userImagePreview.src = response.img_path;
@@ -53,16 +37,24 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = error => reject(error);
+  async function sendImageToServer(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch('http://localhost:8000/store_user_image', {
+      method: 'POST',
+      body: formData
     });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || 'Failed to store user image');
+    }
+
+    return await response.json();
   }
 
-  // TODO Update this in the future to work with filtered images sent from "filter_images" API endpoint
+  // TODO FUTURE - Work with the filtereed images that contain the front-facing garments
   // tryOnButton.addEventListener('click', function () {
   //   chrome.storage.local.get(['selectedImageUrl'], function (result) {
   //     if (result.selectedImageUrl) {

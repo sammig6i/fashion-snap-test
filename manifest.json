@@ -4,7 +4,7 @@
   "version": "1.0",
   "description": "Virtually try on clothes from Zara",
   "permissions": ["activeTab", "storage"],
-  "host_permissions": ["https://*.zara.com/*"],
+  "host_permissions": ["http://localhost:8000/*"],
   "action": {
     "default_popup": "frontend/popup.html"
   },

@@ -34,6 +34,7 @@ async def get_user_image():
   return {"error": "User image not found"}
 
 
+# TODO update solution to store user uploaded images within extension - signin, database, etc
 @app.post("/store_user_image")
 async def store_user_image(file: UploadFile = File(...)):
   try:
@@ -45,6 +46,8 @@ async def store_user_image(file: UploadFile = File(...)):
       image = Image.frombytes(heif_file.mode, heif_file.size, heif_file.data, "raw", heif_file.mode, heif_file.stride)
     else:
       image = Image.open(io.BytesIO(contents))
+
+    image = image.convert("RGB")
 
     user_image_dir = "user_images"
     os.makedirs(user_image_dir, exist_ok=True)
@@ -61,9 +64,10 @@ async def store_user_image(file: UploadFile = File(...)):
     return data
   except Exception as e:
     print(f"Error storing user image: {str(e)}")
-    raise HTTPException(status_code=500, detail="An error occurred while storing the user image")
+    raise HTTPException(status_code=500, detail=f"An error occurred while storing the user image: {str(e)}")
 
 
+# TODO - add inference logic with filtered images for Virtual Try-On Model
 @app.post("/try_on")
 async def try_on(garment_image: str = Form(...), user_image: UploadFile = File(...)):
   tryon_dir = "tryon_images"
@@ -82,22 +86,17 @@ async def try_on(garment_image: str = Form(...), user_image: UploadFile = File(.
   print("User Image saved at:", tryon_user_img_path)
   print("Garment Image saved at:", garment_img_path)
 
-  # TODO virtual try-on model logic heres
-
   return {"message": "Images saved for try-on", "user_image": tryon_user_img_path, "garment_image": garment_img_path}
 
 
-"""
-TODO 
-input - images
-output - non-model, front-facing garment images detected by detection model
-"""
-
-
+# TODO Garment Detection Model - input = images from page; output = non-model, front-facing, garment images
 @app.post("/filter_images")
 async def filter_images(image_list: ImageList):
   if not image_list.images:
     raise HTTPException(status_code=400, detail="No images provided")
+
   # TODO Detection Model filtering logic
+  # patrickjohncyh/fashion-clip - hugging face
+
   data = {"filteredImages": image_list.images}
   return data
