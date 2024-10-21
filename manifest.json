@@ -1,29 +1,21 @@
 {
   "manifest_version": 3,
-  "name": "Zara Virtual Try-On",
+  "name": "Virtual Try-On",
   "version": "1.0",
-  "description": "Virtually try on clothes from Zara",
+  "description": "Virtual Try-On extension for Zara",
   "permissions": ["activeTab", "storage"],
-  "host_permissions": ["http://localhost:8000/*"],
+  "host_permissions": ["https://*.zara.com/*"],
   "action": {
-    "default_popup": "frontend/popup.html"
+    "default_popup": "frontend/dist/index.html"
   },
   "background": {
-    "service_worker": "frontend/src/background.js"
+    "service_worker": "frontend/dist/background.js",
+    "type": "module"
   },
   "content_scripts": [
     {
       "matches": ["https://*.zara.com/*"],
-      "js": ["frontend/src/content.js"]
-    }
-  ],
-  "content_security_policy": {
-    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
-  },
-  "web_accessible_resources": [
-    {
-      "resources": ["frontend/src/content.js"],
-      "matches": ["https://*.zara.com/*"]
+      "js": ["frontend/dist/content.js"]
     }
   ]
 }
