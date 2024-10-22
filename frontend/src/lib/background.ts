@@ -4,6 +4,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "openSidePanel") {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]?.id) {
+        chrome.sidePanel.open({ tabId: tabs[0].id });
+      }
+    });
+  }
+});
+
 async function sendImagesToServer(images: string[]) {
   if (!images || images.length === 0) {
     console.error("No images to send to server");

@@ -6,6 +6,7 @@ import { resolve } from "path";
 export default defineConfig({
   plugins: [svelte()],
   build: {
+    watch: {},
     rollupOptions: {
       input: {
         main: resolve(__dirname, "index.html"),
@@ -20,5 +21,5 @@ export default defineConfig({
     },
     outDir: "dist",
   },
-  base: './'
+  base: "./",
 });

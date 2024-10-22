@@ -5,6 +5,7 @@
   let userImagePreview: HTMLImageElement;
   let resultDiv: HTMLDivElement;
   let isZaraWebsite = false;
+  let theme: "light" | "dark";
 
   onMount(() => {
     // Check if we're on Zara's website
@@ -15,6 +16,29 @@
         resultDiv.textContent = "This extension only works on Zara's website.";
       }
     });
+
+    // Get the initial theme
+    theme =
+      (document.documentElement.getAttribute("data-theme") as
+        | "light"
+        | "dark") || "light";
+
+    // Listen for theme changes
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (
+          mutation.type === "attributes" &&
+          mutation.attributeName === "data-theme"
+        ) {
+          theme =
+            (document.documentElement.getAttribute("data-theme") as
+              | "light"
+              | "dark") || "light";
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, { attributes: true });
   });
 
   async function handleFileChange(event: Event) {
@@ -60,19 +84,21 @@
   }
 </script>
 
-<main>
-  <h1>Virtual Try-On</h1>
-  <input
-    type="file"
-    bind:this={userImageInput}
-    on:change={handleFileChange}
-    accept="image/*,.heic,.heif"
-  />
-  <img
-    bind:this={userImagePreview}
-    alt="Selected outfit for virtual try-on"
-    style="display: none; max-width: 100%; margin-top: 10px;"
-  />
-  <button>Try On</button>
-  <div bind:this={resultDiv}></div>
-</main>
+<div class="card card-compact bg-base-200 shadow-xl flex-grow">
+  <div class="card-body p-4 overflow-y-auto">
+    <input
+      type="file"
+      class="file-input file-input-bordered file-input-secondary w-full"
+      accept="image/*,.heic,.heif"
+      bind:this={userImageInput}
+      on:change={handleFileChange}
+    />
+    <img
+      bind:this={userImagePreview}
+      alt="Selected outfit for virtual try-on"
+      class="mt-4 w-full h-auto max-h-[70vh] object-contain hidden"
+    />
+    <button class="btn btn-primary mt-4 w-full">Try On</button>
+    <div bind:this={resultDiv} class="mt-4 text-base"></div>
+  </div>
+</div>

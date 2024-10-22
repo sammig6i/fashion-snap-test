@@ -3,11 +3,13 @@
   "name": "Virtual Try-On",
   "version": "1.0",
   "description": "Virtual Try-On extension for Zara",
-  "permissions": ["activeTab", "storage"],
+  "permissions": ["activeTab", "storage", "sidePanel", "scripting"],
   "host_permissions": ["https://*.zara.com/*"],
   "action": {
-    "default_popup": "frontend/dist/index.html"
+    "default_popup": "frontend/dist/index.html",
+    "default_icon": "frontend/dist/vite.svg"
   },
+
   "background": {
     "service_worker": "frontend/dist/background.js",
     "type": "module"
